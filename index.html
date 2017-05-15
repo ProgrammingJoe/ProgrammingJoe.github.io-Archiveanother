@@ -1,0 +1,144 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Joe Czepil's info, projects, and contact information.">
+  <meta name="author" content="Joe Czepil">
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Joe Czepil - Personal Website</title>
+
+  <link href="static/main.css" rel="stylesheet">
+  <link rel="shortcut icon" href="static/prof.jpg">
+
+  <script src="https://use.fontawesome.com/5b9b3be893.js"></script>
+
+  <!-- Info displayed when site it shared/linked -->
+  <meta property="og:url"           content="http://www.joeczepil.com" />
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="Joe Czepil" />
+  <meta property="og:description"   content="Joe Czepil's Projects and Contact Info" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+$(document).on('click', '#view-more-stuff', function(event){
+    event.preventDefault();
+    $('html, body').animate({
+        scrollTop: $( $.attr(this, 'href') ).offset().top
+    }, 500);
+});
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-51615716-1', 'auto');
+  ga('send', 'pageview');
+</script>
+</head>
+
+<body>
+
+  <div id="intro">
+    <div class="content">
+      <div class="intro-in">
+      <img class="profpic" src="static/prof.jpg">
+      <div class="namewrapper">
+      <p class="main-title">Joe Czepil</p>
+      <p class="sub-title">developer and student</p>
+      <a target="_blank"  href="https://www.linkedin.com/in/joeczepil/"><i class="social-icon fa fa-linkedin-square" aria-hidden="true"></i></a>
+      <a target="_blank" href="https://twitter.com/BanJoe_Kazooie"><i class="social-icon fa fa-twitter-square" aria-hidden="true"></i></a>
+      <a target="_blank" href="https://github.com/ProgrammingJoe"><i class="social-icon fa fa-github-square" aria-hidden="true"></i></a>
+    </div>
+      <p class="base-text">I'm Joe Czepil and my main experience is as a python developer.
+      However, I am always striving to expand my knowledge beyond that.
+      I am currently in school and in my spare time I am working on Texchange and Unbounded.</p>
+      <p class="base-text"><span class="strong-text">Current book:</span>
+         Superintelligence Paths, Dangers, Strategies - Nick Bostrom
+         <a href="books.html"><span class="morebooks">&nbsp;&nbsp; More books...</span></a>
+      </p>
+    </div>
+    </div>
+    <div class="viewmore-container">
+      <a id="view-more-stuff" href="#projects"><i class="fa fa-angle-down viewmore" aria-hidden="true"></i></a>
+    </div>
+  </div>
+
+  <div id="projects">
+    <div class="content">
+      <div class="projects-in">
+      <p class="section-title">projects</p>
+      <div class="project">
+        <p class="block-title">
+          Unbounded
+          <span class="block-title-extended">in progress</span>
+        </p>
+        <p class="base-text">A service designed to allow individuals around the world to anonymously argue about controversial topics.</p>
+        <p class="skill-list">html | css | python | reactjs | flask | sql | sass</p>
+      </div>
+
+      <div class="project">
+        <a target="_blank" href="http://www.texchange.ca"><p class="block-title">
+          Texchange
+          <span class="block-title-extended">
+            <i class="fa fa-external-link header_project_icon" aria-hidden="true"></i>
+          </span></a>
+        </p>
+        <p class="base-text">A service designed to allow exchanging textbooks on university campuses in BC easy.</p>
+        <p class="skill-list">html | css | python | postgresql | django | s3 | heroku</p>
+      </div>
+
+      <div class="project">
+        <a target="_blank" href="http://www.czepillaw.ca/"><p class="block-title">
+          Alan Czepil Law Website
+          <span class="block-title-extended">
+            <i class="fa fa-external-link header_project_icon" aria-hidden="true"></i>
+          </span></a>
+        </p>
+        <p class="base-text">A static website designed to give Alan Czepil a web presence for his practice.</p>
+        <p class="skill-list">html | css | digital ocean</p>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div id="experience">
+    <div class="content">
+      <div class="experience-in">
+      <p class="section-title">experience</p>
+      <div class="job">
+        <p class="block-title">Global Relay Communications</p>
+        <p class="block-sub-title">Frontend Developer Co-op</p>
+        <p class="base-text">At Global Relay I spent time improving the interface, adding to the developer tools, and refactoring code that affected a large range of the application.</p>
+        <p class="skill-list">javascript | sencha | sass | java | jira | fisheye</p>
+      </div>
+
+      <div class="job">
+        <p class="block-title">ACD Systems Ltd</p>
+        <p class="block-sub-title">Quality Assurance Co-op</p>
+        <p class="base-text">At ACD Systems I managed and participated in quality assurance tasks on four of the new features on the upcoming release of their flagship product.</p>
+        <p class="skill-list">black box testing | testtrack | bugzilla</p>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div id="about">
+    <div class="content">
+      <div class="about-in">
+        <p class="section-title">about</p>
+        <p class="base-text">As mentioned above, I am currently a student studying Software Engineering with a Business minor at University.
+          My graduation will be at the end of April 2018.
+        The majority of my experience so far has been in web development, both front-end and back-end. However, I am interested
+        in learning about data mining, machine learning, and artificial intelligence in time. I also have an interest in psychology.
+        In my spare time, outside of work and personal projects, I enjoy playing video games, rock climbing, soccer, and basically everything in the mountains.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
