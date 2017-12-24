@@ -180,6 +180,11 @@ a:hover {
     top: 10px;
   }
   .profpic {
+    height: 90px;
     margin-bottom: 50px;
+  }
+
+  .content {
+    padding: 40px 0px 40px 0px;
   }
 }
