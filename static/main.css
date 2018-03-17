@@ -213,6 +213,11 @@ a:hover {
     height: 90px;
   }
 
+  .namewrapper {
+    padding: 0;
+    width: 100%;
+  }
+
   .content {
     padding: 40px 0px 40px 0px;
   }
