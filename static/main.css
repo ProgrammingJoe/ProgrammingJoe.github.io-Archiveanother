@@ -11,7 +11,24 @@ body {
 
 .social-icon.fa {
   font-size: 20px;
+  background-color: white;
+  padding: 4px;
+  margin: 0 1px;
+  border-radius: 20px;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .20);
 }
+.social-icon.fa:hover {
+  transform: scale(1.15);
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .25);
+}
+.social-link:hover {
+  opacity: 1
+}
+.fa.fa-link.header_project_icon {
+  font-size: 20px;
+  padding-left: 2px;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -27,7 +44,7 @@ a:hover {
 }
 .sub-title {
   font-size: 18px;
-  color: #FF8966;
+  color: #007699;
   padding: 0px 0px 9px 0px;
   margin: 0px;
 }
@@ -38,8 +55,8 @@ a:hover {
 }
 .block-title {
   font-size: 24px;
-  color: #FF8966;
-  margin: 0px 0px 15px 0px;
+  color: #007699;
+  margin: 0px 0px 13px 0px;
 }
 .block-title-extended {
   font-size: 24px;
@@ -62,8 +79,14 @@ a:hover {
 .skill-list {
   font-size: 18px;
   color: #999A9A;
-  margin: 0px;
+  margin: 2px 0 0 0;
 }
+.skill-set {
+  font-size: 18px;
+  color: #8c8d8d;
+  margin: 2px 0 0 0;
+}
+
 
 
 #nav {
@@ -79,7 +102,7 @@ a:hover {
   height: 100vh;
   width: 100%;
   background-color: #F4F4F4;
-  color: #34383A;
+  color: #2b2e30;
 }
 #projects {
   background-color: #34383A;
@@ -87,7 +110,7 @@ a:hover {
 }
 #experience {
   background-color: #F4F4F4;
-  color: #34383A;
+  color: #2b2e30;
 }
 #about {
   background-color: #34383A;
@@ -95,7 +118,7 @@ a:hover {
 }
 
 .profpic {
-  height: 160px;
+  height: 120px;
   border-radius: 80px;
   display: inline-block;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .20);
@@ -106,15 +129,16 @@ a:hover {
   padding-left: 12px;
 }
 
+#intro .content {
+  position: relative;
+  top: calc(50% - 150px);
+  padding: 0px;
+}
 .content {
   width: 80vw;
   max-width: 700px;
   padding: 100px 0px 100px 0px;
   margin: auto;
-}
-.intro-in {
-  position: relative;
-  top: calc(50vh - 280px);
 }
 
 .project {
@@ -173,14 +197,16 @@ a:hover {
 }
 
 @media only screen and (max-width: 1000px) {
-  .intro-in {
-    top: 50px;
+  #intro .content {
+    top: calc(50% - 200px);
   }
 }
 
 @media only screen and (max-width: 435px) {
+  #intro .content {
+    top: calc(50% - 300px);
+  }
   .intro-in {
-    top: 0px;
     text-align: center;
   }
   .profpic {
