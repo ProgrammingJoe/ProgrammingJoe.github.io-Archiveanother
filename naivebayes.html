@@ -1,0 +1,538 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Naive Bayes Visualization</title>
+  <link href="naivebayes.css" rel="stylesheet">
+  <meta charset="utf-8" />
+</head>
+<script src="http://d3js.org/d3.v3.min.js" type="text/javascript">
+</script>
+<body onload="spreadsheet2();">
+  <div class="title-block">
+    <p class="title">Naive Bayes Visualization For Learning</p>
+  </div>
+  <div class="radio-block">
+    <input type="radio" id="radio-button"/>
+    <span class="smoothing">Smoothing value of 1</span>
+  </div>
+<div id="controls">
+  <div id="buttons" />
+</div>
+  <footer>
+<script>
+
+function spreadsheet2() {
+      d3.json("data/fabricated.json",function(error,data) {
+        expData=data;
+        createSpreadsheet(data)
+      });
+
+      var class2 = {};
+      var class4 = {};
+      var smoothing = false;
+      var feature_count = 15;
+
+      function createSpreadsheet(incData) {
+        var keyValues = d3.keys(incData[0])
+
+        d3.select("#controls")
+        .append("div")
+        .attr("class", "table")
+
+        d3.select("div.table")
+        .append("div")
+        .attr("class", "head")
+        .selectAll("div.data")
+        .data(keyValues)
+        .enter()
+        .append("div")
+        .attr("class", "data data-head")
+        .html(function (d) {
+          return d
+        })
+        .style("left", function(d,i) {return (i * 86) + "px"});
+
+        d3.select("div.table")
+        .selectAll("div.datarow")
+        .data(incData, function(d) {return d.animal}).enter()
+        .append("div")
+        .attr("class", "datarow")
+        .style("top", function(d,i) {return (40 + (i * 40)) + "px"});
+
+        d3.selectAll("div.datarow")
+        .selectAll("div.data")
+        .data(function(d) {return d3.entries(d)})
+        .enter()
+        .append("div")
+        .attr("class", "data")
+        .html(function (d) {return d.value})
+        .style("left", function(d,i,j) {return (i * 86) + "px"});
+
+        d3.select("#controls #buttons").append("div").attr("id", "button1").on("click", highlightClasses).html("1");
+        d3.select("#controls #buttons").append("div").attr("id", "button2").attr("class", "not-active").on("click", sortSheet).html("2");
+        d3.select("#controls #buttons").append("div").attr("id", "button3").attr("class", "not-active").on("click", mergeRows).html("3");
+        d3.select("#controls #buttons").append("div").attr("id", "button4").attr("class", "not-active").on("click", generateProbabilities).html("4");
+        d3.select("#controls #buttons").append("div").attr("id", "button5").attr("class", "not-active").on("click", stackedBar).html("5");
+        d3.select("#controls #buttons").append("div").attr("id", "button6").attr("class", "not-active").on("click", addInputs).html("6");
+
+        // Sorts by class
+        function sortSheet() {
+          var dataset = d3.selectAll("div.datarow").data();
+
+          dataset.sort(function(a,b) {
+            return a.class > b.class;
+          });
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            return d.animal
+          })
+          .transition()
+          .duration(2000)
+          .style("top", function(d,i) {return (40 + (i * 40))});
+
+          d3.select("#button2").attr("class", "not-active");
+          d3.select("#button3").transition().delay(2000).attr("class", "");
+        }
+
+        // Highlight the class columns
+        function highlightClasses() {
+          d3.selectAll("div.datarow")
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i % 16 === 0){
+              if(d.value === "Mystical") {
+                d3.select(this).attr("class", "data blue-class");
+              } else if(d.value === "Real"){
+                d3.select(this).attr("class", "data orange-class");
+              }
+            }
+          });
+
+          d3.select("#button1").attr("class", "not-active");
+          d3.select("#button2").attr("class", "");
+
+          if(d3.select("#radio-button").node().checked) {
+            smoothing = true;
+          }
+          d3.select("#controls").transition().duration(1000).style("top", -38 + "px");
+        }
+
+        // Merges the rows of the table
+        function mergeRows() {
+          var dataset = d3.selectAll("div.datarow").data();
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.class === "Mystical") {
+              return d.animal
+            }
+          })
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(d.key == "hair" && d.value === 1){
+              d3.select(this).attr("class", "data box-highlight");
+            }
+          });
+
+          // Get sums
+          d3.nest().key(function(d){
+              return d.class;
+          })
+          .rollup(function(v){
+            if(v[0].class === "Mystical"){class2.len = v.length;}
+            if(v[0].class === "Real"){class4.len = v.length;}
+
+            return {
+                animal: v.animal,
+                hair: d3.sum(v, function(d){return d.hair;}),
+                feathers: d3.sum(v, function(d){return d.feathers;}),
+                eggs: d3.sum(v, function(d){return d.eggs;}),
+                milk: d3.sum(v, function(d){return d.milk;}),
+                airborne: d3.sum(v, function(d){return d.airborne;}),
+                aquatic: d3.sum(v, function(d){return d.aquatic;}),
+                predator: d3.sum(v, function(d){return d.predator;}),
+                toothed: d3.sum(v, function(d){return d.toothed;}),
+                backbone: d3.sum(v, function(d){return d.backbone;}),
+                breathes: d3.sum(v, function(d){return d.breathes;}),
+                venomous: d3.sum(v, function(d){return d.venomous;}),
+                fins: d3.sum(v, function(d){return d.fins;}),
+                tail: d3.sum(v, function(d){return d.tail;}),
+                domestic: d3.sum(v, function(d){return d.domestic;}),
+                catsize: d3.sum(v, function(d){return d.catsize;}),
+                class: v.class
+              }
+          }).entries(dataset)
+          .map(function(d){
+              if(d.key === "Mystical") {
+                class2.vals = Object.values(d.values);
+              } else if (d.key === "Real") {
+                class4.vals = Object.values(d.values);
+              }
+          });
+
+          // Remove animal from header
+          d3.select('div.head div:first-child').text('');
+
+          // Merge all the class 2 rows to one location
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.class === "Mystical") {
+              return d.animal
+            }
+          })
+          .transition()
+          .delay(1000)
+          .duration(2000)
+          .style("top", 40);
+
+          // Change merged row values to sums
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Demon') {
+              return d.animal
+            }
+          })
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(smoothing) {
+              d3.select(this).transition().delay(2000).text(class2.vals[i]);
+              d3.select(this).transition().delay(500*i+3000).text(class2.vals[i]+1);
+            } else {
+              d3.select(this).transition().delay(2000).text(class2.vals[i]);
+            }
+
+            if(i === class2.vals.length - 1) {
+              d3.select(this).transition().delay(2000).text("Mystical");
+            } else if(i === 0) {
+              d3.select(this).transition().delay(2000).text('count');
+            }
+          });
+
+          // Merge all the class 4 rows to one location
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.class === "Real") {
+              return d.animal
+            }
+          })
+          .transition()
+          .delay(1000)
+          .duration(2000)
+          .style("top", 80);
+
+
+          d3.select("div .table")
+          .transition()
+          .delay(1000)
+          .duration(2000)
+          .style("height", 130 + "px");
+
+          // Change merged row values to sums
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Tiger') {
+              return d.animal
+            }
+          })
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(smoothing) {
+              d3.select(this).transition().delay(2000).text(class4.vals[i]);
+              d3.select(this).transition().delay(500*i+3000).text(class4.vals[i]+1);
+            } else {
+              d3.select(this).transition().delay(2000).text(class4.vals[i]);
+            }
+            if(i === class4.vals.length - 1) {
+              d3.select(this).transition().delay(2000).text("Real");
+            } else if(i === 0) {
+              d3.select(this).transition().delay(2000).text('count');
+            }
+          });
+
+          d3.select("#controls").append("div").attr("class", "class-counts");
+          d3.select("#controls .class-counts").append("p").attr("class", "class-count-1").text("Mystical Class Count: " + class2.len);
+          d3.select("#controls .class-counts").append("p").attr("class", "class-count-2").text("Real Class Count: " + class4.len);
+          if(smoothing) {
+            d3.select("#controls").append("div").attr("class", "smooth-class-counts");
+            d3.select("#controls .smooth-class-counts").append("p").attr("class", "smoothing-count").text("Number of Features: " + feature_count);
+            d3.select("#controls .smooth-class-counts").append("p").attr("class", "class-count-smooth-1").text("Class Count + Feature Count: " + (class2.len+feature_count));
+            d3.select("#controls .smooth-class-counts").append("p").attr("class", "class-count-smooth-2").text("Class Count + Feature Count: " + (class4.len+feature_count));
+          }
+
+          d3.select("#button3").attr("class", "not-active");
+          if(smoothing) {
+            d3.select("#button4").transition().delay(8000).attr("class", "");
+          } else {
+            d3.select("#button4").transition().delay(2500).attr("class", "");
+          }
+        }
+
+        // Sums the rows and divides by the number of classes
+        function generateProbabilities() {
+          var dataset = d3.selectAll("div.datarow").data();
+
+          class4.feature_probs = []
+          class2.feature_probs = []
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Tiger') {
+              return d.animal
+            }
+          })
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              if(smoothing) {
+                var prob = ((class4.vals[i]+1)/(class4.len+feature_count)).toFixed(2)
+                d3.select(this).transition().delay(600*i).text(class4.vals[i]+1 + "/" + (class4.len + feature_count));
+              } else {
+                var prob = (class4.vals[i]/class4.len).toFixed(2)
+                d3.select(this).transition().delay(600*i).text(class4.vals[i] + "/" + (class4.len));
+              }
+              class4.feature_probs.push(prob)
+              d3.select(this).transition().delay(10000).text(prob);
+            } else if(i == 0){
+              d3.select(this).text("Probability");
+            }
+          });
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Demon') {
+              return d.animal
+            }
+          })
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              if(smoothing) {
+                var prob = ((class2.vals[i]+1)/(class2.len+feature_count)).toFixed(2)
+                d3.select(this).transition().delay(600*i).text(class2.vals[i]+1 + "/" + (class2.len + feature_count));
+              } else {
+                var prob = (class2.vals[i]/class2.len).toFixed(2)
+                d3.select(this).transition().delay(600*i).text(class2.vals[i] + "/" + (class2.len));
+              }
+              class2.feature_probs.push(prob);
+              d3.select(this).transition().delay(10000).text(prob);
+            } else if(i == 0){
+              d3.select(this).text("Probability");
+            }
+          });
+
+          d3.select("#button4").attr("class", "not-active");
+          d3.select("#button5").transition().delay(10500).attr("class", "");
+        }
+
+        // Converts the probabilities into a stacked bar chart
+        function stackedBar() {
+          var dataset = d3.selectAll("div.datarow").data();
+
+          d3.select('#controls .class-counts').transition().duration(1000).style("opacity", "0");
+          d3.select('#controls .class-counts').transition().delay(1000).style("display", "none");
+          if(smoothing) {
+            d3.select('#controls .smooth-class-counts').transition().duration(1000).style("opacity", "0");
+            d3.select('#controls .smooth-class-counts').transition().delay(1000).style("display", "none");
+          }
+          d3.select('div.head div:last-child').text('');
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal != 'Tiger' && d.animal != 'Demon') {
+              return d.animal
+            }
+          })
+          .attr("class", "datarow bye-row");
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Tiger') {
+              return d.animal
+            }
+          })
+          .attr("class", "datarow stacked-row")
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              fromtop = parseFloat(class2.feature_probs[i-1])/(parseFloat(class4.feature_probs[i-1]) + parseFloat(class2.feature_probs[i-1]))*400;
+              height = parseFloat(class4.feature_probs[i-1])/(parseFloat(class4.feature_probs[i-1]) + parseFloat(class2.feature_probs[i-1]))*400;
+              d3.select(this).style("top", 80 + "px");
+              d3.select(this).style("width", 66 + "px");
+              d3.select(this).style("margin-left", 6 + "px");
+              d3.select(this).transition().duration(2000).style("height", height + "px")
+              .style("line-height", height + "px")
+              .style("top", fromtop+44 + "px");
+              d3.select(this).attr("class", "data stacked-orange-data");
+            } else {
+              d3.select(this).transition().duration(2000).attr("class", "data bye-data");
+            }
+          });
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Demon') {
+              return d.animal
+            }
+          })
+          .attr("class", "datarow stacked-row")
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              height = parseFloat(class2.feature_probs[i-1])/(parseFloat(class4.feature_probs[i-1]) + parseFloat(class2.feature_probs[i-1]))*400;
+              console.log(height);
+              d3.select(this).style("top", 40 + "px");
+              d3.select(this).style("width", 66 + "px");
+              d3.select(this).style("margin-left", 6 + "px");
+              d3.select(this).transition().duration(2000)
+              .style("height", height + "px")
+              .style("line-height", height + "px");
+
+              if(height == 0) {
+                d3.select(this).style("display", "none");
+              }
+              d3.select(this).attr("class", "data stacked-blue-data");
+            } else {
+              d3.select(this).attr("class", "data bye-data");
+            }
+          });
+
+          d3.select("div .table")
+          .transition()
+          .duration(2000)
+          .style("height", 470 + "px");
+
+          d3.select("#button5").attr("class", "not-active");
+          d3.select("#button6").attr("class", "");
+        }
+
+        function addInputs() {
+          d3.select("#controls")
+          .append("div")
+          .attr("class", "inputs");
+          d3.select("#controls")
+          .append("div")
+          .attr("class", "computations-class-1");
+          d3.select("#controls")
+          .append("div")
+          .attr("class", "computations-class-2");
+
+          d3.select("#controls").transition().duration(2000).style("top", -100 + "px");
+
+          for(var i = 0; i < 15; i++) {
+            d3.select("#controls .inputs").insert("input");
+            d3.select("#controls .computations-class-1").append("div").attr("class", "computation-number");
+            d3.select("#controls .computations-class-2").append("div").attr("class", "computation-number");
+          }
+
+          d3.select("#controls").append("div").attr("class", "probabilities");
+          d3.select("#controls .probabilities").append("p").attr("class", "probality-1");
+          d3.select("#controls .probabilities").append("p").attr("class", "probality-2");
+
+          d3.select("#controls").append("div").attr("class", "computations");
+          d3.select("#controls .computations").append("p").attr("class", "prob-1");
+          d3.select("#controls .computations").append("p").attr("class", "prob-2");
+
+          d3.select("#controls .inputs").append("div").attr("id", "classify-button").on("click", classifyInput).html("Classify");
+
+          d3.select("#button6").attr("class", "not-active");
+        }
+
+        function classifyInput() {
+          var dataset = d3.selectAll("div.datarow").data();
+          var inputs = [];
+
+          class4.class_prob = 1;
+          class2.class_prob = 2;
+
+          d3.selectAll("input")
+          .each(function (d, i) {
+            var value = d3.select(this)[0][0].value;
+            if(value) {
+              inputs.push(parseInt(d3.select(this)[0][0].value));
+            } else {
+              inputs.push(0);
+            }
+          });
+
+          d3.selectAll(".computations-class-1 div.computation-number")
+          .data(class2.feature_probs)
+          .each(function (d, i) {
+            d3.select(this).style("opacity", 0);
+            if(inputs[i] != 0) {
+              class2.class_prob *= d;
+              d3.select(this).text(d + " x");
+            } else {
+              class2.class_prob *= (1-d);
+              d3.select(this).text("1 - " + d + " x");
+            }
+            d3.select(this).transition().delay(500*i+500).duration(400).style("opacity", 1);
+          });
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Demon') {
+              return d.animal
+            }
+          })
+          .attr("class", "datarow stacked-row")
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              d3.select(this).style("background-color", "#63C5F0");
+              d3.select(this).transition().delay(500*i).duration(400).style("background-color", "#1DA6E1"); // Set bright border
+              d3.select(this).style("width", 66 + "px");
+            }
+          });
+
+          d3.selectAll(".computations-class-2 div.computation-number")
+          .data(class4.feature_probs)
+          .each(function (d, i) {
+            d3.select(this).style("opacity", 0);
+            if(inputs[i] != 0) {
+              class4.class_prob *= d;
+              d3.select(this).text(d + " x");
+            } else {
+              class4.class_prob *= (1-d);
+              d3.select(this).text("1 - " + d + " x");
+            }
+            d3.select(this).transition().delay(500*i + 9200).duration(400).style("opacity", 1);
+          });
+
+          d3.selectAll("div.datarow").data(dataset, function(d) {
+            if(d.animal === 'Tiger') {
+              return d.animal
+            }
+          })
+          .attr("class", "datarow stacked-row")
+          .selectAll("div.data")
+          .each(function (d, i) {
+            if(i != 0 && i != 16) {
+              d3.select(this).style("background-color", "#F9AF67");
+              d3.select(this).transition().delay(500*i + 8700).duration(400).style("background-color", "#F47738"); // Set bright border
+              d3.select(this).style("width", 66 + "px");
+            }
+          });
+
+          d3.select(".probality-1").transition().delay(18000).text("$$Real = {" + class2.class_prob + "}$$");
+          d3.select(".probality-2").transition().delay(18000).text("$$Mystical = {" + class4.class_prob + "}$$");
+
+          setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML";
+            document.getElementsByTagName("head")[0].appendChild(script);
+          }, 18100)
+
+          d3.select(".prob-1").transition().delay(20000).text("$$Real\\;Probability = {" + class2.class_prob + "\\over(" + class2.class_prob + "+" + class4.class_prob + ")} = " + class2.class_prob/(class2.class_prob+class4.class_prob) + "$$");
+          d3.select(".prob-2").transition().delay(20000).text("$$Mystical\\;Probability = {" + class4.class_prob + "\\over(" + class2.class_prob + "+" + class4.class_prob + ")} = " + class4.class_prob/(class2.class_prob+class4.class_prob) + "$$");
+
+          if(class2.class_prob > class4.class_prob) {
+            d3.select("#controls .computations").append("p").attr("class", "result");
+            d3.select("#controls .computations .result").transition().delay(22000).text("Probably a real animal");
+          } else {
+            d3.select("#controls .computations").append("p").attr("class", "result");
+            d3.select("#controls .computations .result").transition().delay(22000).text("Probably a mystical beast");
+
+          }
+
+          setTimeout(function(){
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+          }, 20100)
+        }
+
+
+      } // End createSpreadsheet
+}
+
+</script>
+</footer>
+</body>
+</html>
