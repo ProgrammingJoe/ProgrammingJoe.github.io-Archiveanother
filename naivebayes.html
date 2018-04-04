@@ -368,7 +368,6 @@ function spreadsheet2() {
           .each(function (d, i) {
             if(i != 0 && i != 16) {
               height = parseFloat(class2.feature_probs[i-1])/(parseFloat(class4.feature_probs[i-1]) + parseFloat(class2.feature_probs[i-1]))*400;
-              console.log(height);
               d3.select(this).style("top", 40 + "px");
               d3.select(this).style("width", 66 + "px");
               d3.select(this).style("margin-left", 6 + "px");
@@ -408,7 +407,7 @@ function spreadsheet2() {
           d3.select("#controls").transition().duration(2000).style("top", -100 + "px");
 
           for(var i = 0; i < 15; i++) {
-            d3.select("#controls .inputs").insert("input");
+            d3.select("#controls .inputs").insert("input").attr("class", "classify-input");
             d3.select("#controls .computations-class-1").append("div").attr("class", "computation-number");
             d3.select("#controls .computations-class-2").append("div").attr("class", "computation-number");
           }
@@ -433,7 +432,7 @@ function spreadsheet2() {
           class4.class_prob = 1;
           class2.class_prob = 2;
 
-          d3.selectAll("input")
+          d3.selectAll("input.classify-input")
           .each(function (d, i) {
             var value = d3.select(this)[0][0].value;
             if(value) {
@@ -441,7 +440,7 @@ function spreadsheet2() {
             } else {
               inputs.push(0);
             }
-          });
+        });
 
           d3.selectAll(".computations-class-1 div.computation-number")
           .data(class2.feature_probs)
