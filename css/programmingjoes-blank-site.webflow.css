@@ -35,14 +35,23 @@
   display: flex;
 }
 
+.intro-block {
+  display: flex;
+  margin-top: 140px;
+  margin-bottom: 140px;
+}
 .paragraph {
   display: inline-block;
-  margin-top: 140px;
   margin-right: 140px;
-  margin-bottom: 140px;
   color: #000;
   font-size: 28px;
   line-height: 46px;
+}
+.profile-img {
+  margin-right: 12px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50px;
 }
 
 .heading-2 {
@@ -524,6 +533,12 @@
 }
 
 @media (max-width: 767px) {
+  .intro-block {
+    flex-direction: column;
+  }
+  .profile-img {
+    margin-bottom: 12px;
+  }
   .body {
     padding-right: 20px;
     padding-left: 20px;
