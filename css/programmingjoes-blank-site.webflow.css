@@ -92,6 +92,7 @@
   border-radius: 8px;
   background-color: #ffc5b3;
   color: #000;
+  font-size: 16px;
 }
 
 .project {
@@ -224,7 +225,7 @@
 }
 
 .social {
-  width: 20px;
+  width: 22px;
   margin-right: 12px;
 }
 
@@ -299,6 +300,7 @@
 }
 
 .div-block-6 {
+  font-size: 17px;
   position: relative;
   padding-top: 40px;
   padding-bottom: 60px;
@@ -428,6 +430,9 @@
 .nav-link {
   color: #000;
 }
+.w-nav-link {
+  font-size: 18px;
+}
 
 .nav-link.w--current {
   color: #000;
@@ -460,7 +465,7 @@
   display: block;
   width: auto;
   min-width: auto;
-  margin-top: 7px;
+  margin-top: 10px;
   margin-right: auto;
   margin-left: auto;
   border-radius: 8px;
